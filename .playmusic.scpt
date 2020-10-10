@@ -2,6 +2,8 @@
 -- fix the song function so user can be prompted to choose song if multiple results
 on run argv
     
+    -- activate application "Music" 
+
 	if (item 1 of argv = "getplaylists") then
 		tell application "Music"
 			get name of playlists
@@ -94,6 +96,7 @@ on run argv
     end if 
 
     if (item 1 of argv = "volume") then
+        
         if (item 2 of argv = "loud") then
             set volume output volume 80
         end if
@@ -120,5 +123,23 @@ on run argv
             set loved of current track to true
         end tell    
     end if 
+
+    if (item 1 of argv = "remove") then
+        tell application "Music"
+            set theTracks to (every track of playlist "Library" whose artist contains item 2 of argv) 
+            set trackCount to count of theTracks
+            repeat with i from trackCount to 1 by -1 
+                set tempTrack to theTracks's item i
+                delete tempTrack  
+            end repeat
+        end tell
+    end if 
+
+    tell application "Music" 
+        set output to ("Name: " & name of current track & " by artist: " & artist of current track)
+    end tell
+
+    copy output to stdout
+    do shell script "echo " & quoted form of output
 
 end run
